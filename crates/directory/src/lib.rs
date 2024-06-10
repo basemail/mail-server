@@ -32,6 +32,7 @@ use backend::{
     memory::MemoryDirectory,
     smtp::SmtpDirectory,
     sql::SqlDirectory,
+    basemail::BasemailDirectory,
 };
 use deadpool::managed::PoolError;
 use ldap3::LdapError;
@@ -95,6 +96,7 @@ pub enum DirectoryError {
     Management(ManagementError),
     TimedOut,
     Unsupported,
+    Basemail(String),
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -114,6 +116,7 @@ pub enum DirectoryInner {
     Imap(ImapDirectory),
     Smtp(SmtpDirectory),
     Memory(MemoryDirectory),
+    Basemail(BasemailDirectory),
 }
 
 pub enum QueryBy<'x> {
