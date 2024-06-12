@@ -10,6 +10,7 @@ use ethers::{
     types::{Address, U256},
 };
 use reqwest::Client;
+use serde_json::json;
 
 pub struct BasemailDirectory {
     api_url: String,
@@ -19,34 +20,41 @@ pub struct BasemailDirectory {
 
 impl BasemailDirectory {
     // Internal functions to query the basemail API and contract
-    pub async fn validate(&self, token: &String) -> Result<Address, &'static str> {
-        // Validate the token with the auth service
-        // Token needs to be in json format
-        let client = Client::new();
-        let response = client
-            .get(&format!("{}/validate/", self.api_url))
-            .json(&token)
-            .send()
-            .await;
-        let address = match response {
-            Ok(response) => {
-                if response.status() != 200 {
-                    return Err("Invalid token");
-                }
-                // Parse the response
-                match response.json::<Address>().await {
-                    Ok(address) => address,
-                    Err(_) => {
-                        return Err("Error parsing token");
-                    }
-                }
-            }
+    pub async fn validate(&self, account_id: u32, token: &String) -> Result<bool, &'static str> {
+
+        // Get the owner of the account from the basemail contract
+        let owner = match self.get_account_owner(&account_id).await {
+            Ok(owner) => owner.to_string(),
             Err(_) => {
-                return Err("Error validating token");
+                return Err("Error getting owner of account");
             }
         };
 
-        Ok(address)
+        // Validate the token with the auth service
+        // Token needs to be in json format
+        let client = Client::new();
+        let payload = json!({
+            "chain_id": self.chain_id,
+            "address": owner,
+            "access_token": token
+        });
+        let response = client
+            .get(&format!("{}/validate/", self.api_url))
+            .json(&payload)
+            .send()
+            .await;
+        
+        // Parse the response and return a value
+        match response {
+            Ok(response) => {
+                match response.status().as_str() {
+                    "200" => Ok(true),
+                    "401" => Ok(false),
+                    _ => Err("Error validating token"),
+                }
+            },
+            Err(_) => Err("Error validating token"),
+        }
     }
 
     // async fn get_account_ids_for_owner(&self, address: &Address) -> Result<Vec<U256>, &'static str> {

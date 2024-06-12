@@ -47,33 +47,20 @@ impl BasemailDirectory {
                     // The secret is an OAuth token, but we use the plain credential format
                     // to avoid local validation of the token and to validate the address againt the one returned by the token
 
-                    // Check that the token is valid
-                    let siwe_address = match self.validate(secret).await {
-                        Ok(address) => address,
-                        Err(_) => {
-                            return Err(DirectoryError::Basemail("Invalid token".to_string()))
-                        }
-                    };
-
-                    // Get the owner of token in the username
-                    let owner_address = match self.get_account_owner(&token_id).await {
-                        Ok(address) => address,
-                        Err(_) => {
+                    // Check that the token is valid, if so return the token ID as the account ID
+                    // otherwise, return an error message
+                    match self.validate(token_id, secret).await {
+                        Ok(valid) => if valid {
+                            Some(token_id)
+                        } else {
                             return Err(DirectoryError::Basemail(
-                                "Error getting owner of account".to_string(),
-                            ))
+                                "Invalid credentials".to_string(),
+                            ));
+                        },
+                        Err(e) => {
+                            return Err(DirectoryError::Basemail(e.to_string()));
                         }
-                    };
-
-                    // Check that the owner of the token is the same as the owner of the siwe_access_token
-                    if siwe_address != owner_address {
-                        return Err(DirectoryError::Basemail(
-                            "Account owner does not match token".to_string(),
-                        ));
                     }
-
-                    // The Token ID is the account ID
-                    Some(token_id)
                 }
                 _ => return Ok(None), // OAuth and XOauth2 are not supported
             },
