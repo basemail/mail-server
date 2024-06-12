@@ -3,22 +3,19 @@ use ethers::{
     types::{Address, U256},
     providers::{Provider, Http},
 };
-// use mongodb::Client as MongoClient;
-use reqwest::Client as WebClient;
+use reqwest::Client;
 use std::sync::Arc;
 use super::basemail_account::BasemailAccount;
 
 pub struct BasemailAuth {
     api_url: String,
-    database_uri: String,
-    database_name: String,
     chain_id: u64,
     basemail_contract: BasemailAccount<Provider<Http>>,
 }
 
 impl BasemailAuth {
 
-    pub fn new(api_url: String, database_uri: String, database_name: String, chain_id: u64, rpc_url: String, basemail_address: Address) -> Self {
+    pub fn new(api_url: String, chain_id: u64, rpc_url: String, basemail_address: Address) -> Self {
         // TODO 
         // Validate that the chain ID is supported by the database
         // Can't validate that the chain ID matches the RPC URL here because the function is not async
@@ -27,8 +24,6 @@ impl BasemailAuth {
 
         BasemailAuth {
             api_url,
-            database_uri,
-            database_name,
             chain_id,
             basemail_contract,
         }
@@ -37,7 +32,7 @@ impl BasemailAuth {
     pub async fn validate(&self, token: &String) -> Result<Address, &'static str> {
         // Validate the token with the auth service
         // Token needs to be in json format
-        let client = WebClient::new();
+        let client = Client::new();
         let response = client.get(&format!("{}/validate/", self.api_url))
             .json(&token)
             .send()

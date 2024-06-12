@@ -372,6 +372,7 @@ impl JMAP {
                 DirectoryInner::Imap(_) => "IMAP",
                 DirectoryInner::Smtp(_) => "SMTP",
                 DirectoryInner::Memory(_) => "In-Memory",
+                DirectoryInner::Basemail(_) => "Basemail",
             }
             .into(),
         }

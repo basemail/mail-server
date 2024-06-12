@@ -26,13 +26,13 @@ use std::{fmt::Debug, sync::Arc};
 
 use ahash::AHashMap;
 use backend::{
+    basemail::BasemailDirectory,
     imap::{ImapDirectory, ImapError},
     internal::PrincipalField,
     ldap::LdapDirectory,
     memory::MemoryDirectory,
     smtp::SmtpDirectory,
     sql::SqlDirectory,
-    basemail::BasemailDirectory,
 };
 use deadpool::managed::PoolError;
 use ldap3::LdapError;
