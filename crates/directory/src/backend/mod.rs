@@ -21,6 +21,7 @@
  * for more details.
 */
 
+pub mod basemail;
 pub mod imap;
 pub mod internal;
 pub mod ldap;

@@ -38,6 +38,7 @@ impl Directory {
             DirectoryInner::Imap(store) => store.query(by).await,
             DirectoryInner::Smtp(store) => store.query(by).await,
             DirectoryInner::Memory(store) => store.query(by).await,
+            DirectoryInner::Basemail(store) => store.query(by).await,
         }
     }
 
@@ -49,6 +50,7 @@ impl Directory {
             DirectoryInner::Imap(store) => store.email_to_ids(email).await,
             DirectoryInner::Smtp(store) => store.email_to_ids(email).await,
             DirectoryInner::Memory(store) => store.email_to_ids(email).await,
+            DirectoryInner::Basemail(store) => store.email_to_ids(email).await,
         }
     }
 
@@ -67,6 +69,7 @@ impl Directory {
             DirectoryInner::Imap(store) => store.is_local_domain(domain).await,
             DirectoryInner::Smtp(store) => store.is_local_domain(domain).await,
             DirectoryInner::Memory(store) => store.is_local_domain(domain).await,
+            DirectoryInner::Basemail(store) => store.is_local_domain(domain).await,
         }?;
 
         // Update cache
@@ -92,6 +95,7 @@ impl Directory {
             DirectoryInner::Imap(store) => store.rcpt(email).await,
             DirectoryInner::Smtp(store) => store.rcpt(email).await,
             DirectoryInner::Memory(store) => store.rcpt(email).await,
+            DirectoryInner::Basemail(store) => store.rcpt(email).await,
         }?;
 
         // Update cache
@@ -110,6 +114,7 @@ impl Directory {
             DirectoryInner::Imap(store) => store.vrfy(address).await,
             DirectoryInner::Smtp(store) => store.vrfy(address).await,
             DirectoryInner::Memory(store) => store.vrfy(address).await,
+            DirectoryInner::Basemail(store) => store.vrfy(address).await,
         }
     }
 
@@ -121,6 +126,7 @@ impl Directory {
             DirectoryInner::Imap(store) => store.expn(address).await,
             DirectoryInner::Smtp(store) => store.expn(address).await,
             DirectoryInner::Memory(store) => store.expn(address).await,
+            DirectoryInner::Basemail(store) => store.expn(address).await,
         }
     }
 }

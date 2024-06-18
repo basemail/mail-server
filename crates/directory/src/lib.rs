@@ -26,6 +26,7 @@ use std::{fmt::Debug, sync::Arc};
 
 use ahash::AHashMap;
 use backend::{
+    basemail::BasemailDirectory,
     imap::{ImapDirectory, ImapError},
     internal::PrincipalField,
     ldap::LdapDirectory,
@@ -95,6 +96,7 @@ pub enum DirectoryError {
     Management(ManagementError),
     TimedOut,
     Unsupported,
+    Basemail(String),
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -114,6 +116,7 @@ pub enum DirectoryInner {
     Imap(ImapDirectory),
     Smtp(SmtpDirectory),
     Memory(MemoryDirectory),
+    Basemail(BasemailDirectory),
 }
 
 pub enum QueryBy<'x> {
