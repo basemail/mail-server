@@ -15,22 +15,9 @@ bind = ["[::]:465"]
 protocol = "smtp"
 tls.implicit = true
 
-[server.listener."imap"]
-bind = ["[::]:143"]
-protocol = "imap"
-
 [server.listener."imaptls"]
 bind = ["[::]:993"]
 protocol = "imap"
-tls.implicit = true
-
-[server.listener.pop3]
-bind = "[::]:110"
-protocol = "pop3"
-
-[server.listener.pop3s]
-bind = "[::]:995"
-protocol = "pop3"
 tls.implicit = true
 
 [server.listener."sieve"]
@@ -47,15 +34,20 @@ data = "rocksdb"
 fts = "rocksdb"
 blob = "rocksdb"
 lookup = "rocksdb"
-directory = "internal"
+directory = "basemail"
 
 [store."rocksdb"]
 type = "rocksdb"
 path = "%{env:STALWART_PATH}%/data"
 compression = "lz4"
 
-[directory."internal"]
-type = "internal"
+[directory."basemail"]
+type = "basemail"
+api_url = "%{env:AUTH_SERVER_URL}%"
+chain_id = "%{env:CHAIN_ID}%"
+rpc_url = "%{env:RPC_URL}%"
+basemail_address = "%{env:BASEMAIL_ADDRESS}%"
+
 store = "rocksdb"
 
 [tracer."stdout"]
@@ -63,11 +55,3 @@ type = "stdout"
 level = "info"
 ansi = false
 enable = true
-
-#[server.run-as]
-#user = "stalwart-mail"
-#group = "stalwart-mail"
-
-[authentication.fallback-admin]
-user = "admin"
-secret = "%{env:ADMIN_SECRET}%"
