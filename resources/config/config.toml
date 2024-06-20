@@ -42,6 +42,11 @@ protocol = "http"
 bind = ["[::]:443"]
 tls.implicit = true
 
+[server.listener."jmap"]
+bind = ["[::]:8080"]
+protocol = "http"
+tls.implicit = true
+
 [storage]
 data = "rocksdb"
 fts = "rocksdb"
