@@ -39,11 +39,11 @@ impl BasemailDirectory {
             "access_token": token
         });
         let response = client
-            .get(&format!("{}/validate/", self.api_url))
+            .post(&format!("{}/validate", self.api_url))
             .json(&payload)
             .send()
             .await;
-        
+
         // Parse the response and return a value
         match response {
             Ok(response) => {

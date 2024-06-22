@@ -29,6 +29,7 @@ RUN RUSTFLAGS="$(cat /flags.txt)" cargo build --target "$(cat /target.txt)" --re
 RUN mv "/build/target/$(cat /target.txt)/release" "/output"
 
 FROM docker.io/debian:bookworm-slim
+LABEL org.opencontainers.image.source=https://github.com/basemail/mail-server
 WORKDIR /opt/stalwart-mail
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
