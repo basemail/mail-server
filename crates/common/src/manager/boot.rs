@@ -452,7 +452,7 @@ data = "rocksdb"
 fts = "rocksdb"
 blob = "rocksdb"
 lookup = "rocksdb"
-directory = "internal"
+directory = "basemail"
 
 [store.rocksdb]
 type = "rocksdb"
@@ -462,6 +462,13 @@ compression = "lz4"
 [directory.internal]
 type = "internal"
 store = "rocksdb"
+
+[directory.basemail]
+type = "basemail"
+api_url = "http://localhost:8081"
+chain_id = 84532
+rpc_url = "https://sepolia.base.org"
+basemail_address = "0x0xBdB578684B46ef9FdB669A49c2d19E2F96d7920F"
 
 [tracer.log]
 type = "log"
