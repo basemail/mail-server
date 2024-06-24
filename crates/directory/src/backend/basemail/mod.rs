@@ -24,7 +24,7 @@ impl BasemailDirectory {
 
         // Get the owner of the account from the basemail contract
         let owner = match self.get_account_owner(&account_id).await {
-            Ok(owner) => owner.to_string(),
+            Ok(owner) => owner,
             Err(_) => {
                 return Err("Error getting owner of account");
             }
