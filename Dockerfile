@@ -36,6 +36,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -yq ca-certificates
 COPY --from=builder /output/stalwart-mail /usr/local/bin
 COPY --from=builder /output/stalwart-cli /usr/local/bin
+COPY ./resources/config/config.toml /opt/stalwart-mail/etc/config.toml
 COPY ./resources/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod -R 755 /usr/local/bin
 CMD ["/usr/local/bin/stalwart-mail"]
