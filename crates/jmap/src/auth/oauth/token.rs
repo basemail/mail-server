@@ -224,7 +224,6 @@ impl JMAP {
         client_id: &str,
         with_refresh_token: bool,
     ) -> Result<OAuthResponse, &'static str> {
-
         Ok(OAuthResponse {
             access_token: self.encode_access_token(
                 "access_token",
@@ -261,10 +260,7 @@ impl JMAP {
             return Err("ClientId is too long");
         }
         let key = self.core.jmap.oauth_key.clone();
-        let context = format!(
-            "{} {} {}",
-            grant_type, client_id, account_id
-        );
+        let context = format!("{} {} {}", grant_type, client_id, account_id);
         let context_nonce = format!("{} nonce {}", grant_type, account_id);
 
         // Set expiration time
@@ -330,10 +326,7 @@ impl JMAP {
 
         // Build context
         let key = self.core.jmap.oauth_key.clone();
-        let context = format!(
-            "{} {} {}",
-            grant_type, client_id, account_id
-        );
+        let context = format!("{} {} {}", grant_type, client_id, account_id);
         let context_nonce = format!("{} nonce {}", grant_type, account_id);
 
         // Calculate nonce

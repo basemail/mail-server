@@ -21,7 +21,6 @@ pub struct BasemailDirectory {
 impl BasemailDirectory {
     // Internal functions to query the basemail API and contract
     pub async fn validate(&self, account_id: u32, token: &String) -> Result<bool, &'static str> {
-
         // Get the owner of the account from the basemail contract
         let owner = match self.get_account_owner(&account_id).await {
             Ok(owner) => owner,
@@ -46,12 +45,10 @@ impl BasemailDirectory {
 
         // Parse the response and return a value
         match response {
-            Ok(response) => {
-                match response.status().as_str() {
-                    "200" => Ok(true),
-                    "401" => Ok(false),
-                    _ => Err("Error validating token"),
-                }
+            Ok(response) => match response.status().as_str() {
+                "200" => Ok(true),
+                "401" => Ok(false),
+                _ => Err("Error validating token"),
             },
             Err(_) => Err("Error validating token"),
         }

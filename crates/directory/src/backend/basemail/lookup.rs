@@ -50,13 +50,15 @@ impl BasemailDirectory {
                     // Check that the token is valid, if so return the token ID as the account ID
                     // otherwise, return an error message
                     match self.validate(token_id, secret).await {
-                        Ok(valid) => if valid {
-                            Some(token_id)
-                        } else {
-                            return Err(DirectoryError::Basemail(
-                                "Invalid credentials".to_string(),
-                            ));
-                        },
+                        Ok(valid) => {
+                            if valid {
+                                Some(token_id)
+                            } else {
+                                return Err(DirectoryError::Basemail(
+                                    "Invalid credentials".to_string(),
+                                ));
+                            }
+                        }
                         Err(e) => {
                             return Err(DirectoryError::Basemail(e.to_string()));
                         }
