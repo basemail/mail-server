@@ -23,7 +23,7 @@
 
 use std::time::SystemTime;
 
-use directory::QueryBy;
+// use directory::QueryBy;
 use hyper::StatusCode;
 use mail_builder::encoders::base64::base64_encode;
 use mail_parser::decoders::base64::base64_decode;
@@ -198,25 +198,25 @@ impl JMAP {
         .into_http_response()
     }
 
-    async fn password_hash(&self, account_id: u32) -> Result<String, &'static str> {
-        if account_id != u32::MAX {
-            self.core
-                .storage
-                .directory
-                .query(QueryBy::Id(account_id), false)
-                .await
-                .map_err(|_| "Temporary lookup error")?
-                .ok_or("Account no longer exists")?
-                .secrets
-                .into_iter()
-                .next()
-                .ok_or("Failed to obtain password hash")
-        } else if let Some((_, secret)) = &self.core.jmap.fallback_admin {
-            Ok(secret.clone())
-        } else {
-            Err("Invalid account id.")
-        }
-    }
+    // async fn password_hash(&self, account_id: u32) -> Result<String, &'static str> {
+    //     if account_id != u32::MAX {
+    //         self.core
+    //             .storage
+    //             .directory
+    //             .query(QueryBy::Id(account_id), false)
+    //             .await
+    //             .map_err(|_| "Temporary lookup error")?
+    //             .ok_or("Account no longer exists")?
+    //             .secrets
+    //             .into_iter()
+    //             .next()
+    //             .ok_or("Failed to obtain password hash")
+    //     } else if let Some((_, secret)) = &self.core.jmap.fallback_admin {
+    //         Ok(secret.clone())
+    //     } else {
+    //         Err("Invalid account id.")
+    //     }
+    // }
 
     pub async fn issue_token(
         &self,
@@ -224,13 +224,11 @@ impl JMAP {
         client_id: &str,
         with_refresh_token: bool,
     ) -> Result<OAuthResponse, &'static str> {
-        let password_hash = self.password_hash(account_id).await?;
 
         Ok(OAuthResponse {
             access_token: self.encode_access_token(
                 "access_token",
                 account_id,
-                &password_hash,
                 client_id,
                 self.core.jmap.oauth_expiry_token,
             )?,
@@ -240,7 +238,6 @@ impl JMAP {
                 self.encode_access_token(
                     "refresh_token",
                     account_id,
-                    &password_hash,
                     client_id,
                     self.core.jmap.oauth_expiry_refresh_token,
                 )?
@@ -256,7 +253,6 @@ impl JMAP {
         &self,
         grant_type: &str,
         account_id: u32,
-        password_hash: &str,
         client_id: &str,
         expiry_in: u64,
     ) -> Result<String, &'static str> {
@@ -266,10 +262,10 @@ impl JMAP {
         }
         let key = self.core.jmap.oauth_key.clone();
         let context = format!(
-            "{} {} {} {}",
-            grant_type, client_id, account_id, password_hash
+            "{} {} {}",
+            grant_type, client_id, account_id
         );
-        let context_nonce = format!("{} nonce {}", grant_type, password_hash);
+        let context_nonce = format!("{} nonce {}", grant_type, account_id);
 
         // Set expiration time
         let expiry = SystemTime::now()
@@ -332,16 +328,13 @@ impl JMAP {
             return Err("Token expired.");
         }
 
-        // Obtain password hash
-        let password_hash = self.password_hash(account_id).await?;
-
         // Build context
         let key = self.core.jmap.oauth_key.clone();
         let context = format!(
-            "{} {} {} {}",
-            grant_type, client_id, account_id, password_hash
+            "{} {} {}",
+            grant_type, client_id, account_id
         );
-        let context_nonce = format!("{} nonce {}", grant_type, password_hash);
+        let context_nonce = format!("{} nonce {}", grant_type, account_id);
 
         // Calculate nonce
         let mut hasher = blake3::Hasher::new();
