@@ -391,7 +391,11 @@ fn quickstart(path: impl Into<PathBuf>) {
         path.join("etc").join("config.toml"),
         QUICKSTART_CONFIG
             .replace("_P_", &path.to_string_lossy())
-            .replace("_S_", &sha512_crypt::hash(&admin_pass).unwrap()),
+            .replace("_S_", &sha512_crypt::hash(&admin_pass).unwrap())
+            .replace("_A_", std::env::var("AUTH_API_URL").unwrap().as_str())
+            .replace("_C_", std::env::var("CHAIN_ID").unwrap().as_str())
+            .replace("_R_", std::env::var("RPC_URL").unwrap().as_str())
+            .replace("_B_", std::env::var("BASEMAIL_ADDRESS").unwrap().as_str()),
     )
     .failed("Failed to write configuration file");
 
@@ -465,10 +469,10 @@ store = "rocksdb"
 
 [directory.basemail]
 type = "basemail"
-api_url = "http://localhost:8081"
-chain_id = 84532
-rpc_url = "https://sepolia.base.org"
-basemail_address = "0xBdB578684B46ef9FdB669A49c2d19E2F96d7920F"
+api_url = "_A_"
+chain_id = _C_
+rpc_url = "_R_"
+basemail_address = "_B_"
 
 [tracer.log]
 type = "log"
